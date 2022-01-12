@@ -14,7 +14,7 @@ int main(void)
                 int retval;
 
                 /* Print prompt */
-                printf("sshell$ ");
+                printf("sshell@ucd$ ");
                 fflush(stdout);
 
                 /* Get command line */
@@ -31,18 +31,26 @@ int main(void)
                 if (nl)
                         *nl = '\0';
 
-                /* Builtin command */
+                ////////////////////////////////////////////////////////////////////////
+                /* struct for a command and it's arguements */
+
+
+
+                /* Builtin command - exit */
                 if (!strcmp(cmd, "exit")) {
                         fprintf(stderr, "Bye...\n");
                         break;
                 }
 
+                /* Builtin command - pwd */
+                
+                /* Builtin command - cd */
+
                 /* Regular command */
 
                 /* attempting with the fork, exec, wait method */
                 pid_t pid;
-                //char *cmd = "echo";
-                char *args[] = {cmd, NULL};
+                char *args[] = {cmd, NULL}; // this will need to be created when parsing the command line
                 pid = fork();
                 if (pid == 0) {
                         /* Child */
@@ -59,10 +67,6 @@ int main(void)
                         perror("fork");
                         exit(1);
                 }
-
-                //retval = system(cmd);
-                // fprintf(stdout, "Return status value for '%s': %d\n",
-                //         cmd, retval);
         }
 
         return EXIT_SUCCESS;
