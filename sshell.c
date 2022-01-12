@@ -38,9 +38,31 @@ int main(void)
                 }
 
                 /* Regular command */
-                retval = system(cmd);
-                fprintf(stdout, "Return status value for '%s': %d\n",
-                        cmd, retval);
+
+                /* attempting with the fork, exec, wait method */
+                pid_t pid;
+                //char *cmd = "echo";
+                char *args[] = {cmd, NULL};
+                pid = fork();
+                if (pid == 0) {
+                        /* Child */
+                        execvp(cmd, args);
+                        perror("execvp");
+                        exit(1);
+                } else if (pid > 0) {
+                        /* Parent */
+                        int status;
+                        waitpid(pid, &status, 0);
+                        printf("+ completed '%s' [%d]\n", cmd,
+                        WEXITSTATUS(status));
+                } else {
+                        perror("fork");
+                        exit(1);
+                }
+
+                //retval = system(cmd);
+                // fprintf(stdout, "Return status value for '%s': %d\n",
+                //         cmd, retval);
         }
 
         return EXIT_SUCCESS;
