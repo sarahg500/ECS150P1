@@ -33,9 +33,12 @@ int main(void)
 
                 ////////////////////////////////////////////////////////////////////////
                 /* struct for a command and it's arguements */
-                // this works to have arguments, but it should be turned into a struct/data structure
-                // so we can keep this better organized as we go along (as suggested in the phases)
-
+                // basic struct idea- hasn't been put to use yet
+                struct command {
+                        char *orginalCommand; //string with all the arguments
+                        char *args[16]; // array of each individual argument
+                        char *name; // the first argument, which is the name of the command
+                };
                 //use strtok to parse command into an array of arguments
                 char *curword = strtok(cmd, " ");
                 char *args[16] = {};
