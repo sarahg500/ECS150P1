@@ -31,74 +31,38 @@ int main(void)
                 if (nl)
                         *nl = '\0';
 
-        //////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////
                 /* struct for a command and it's arguements */
-                // basic struct idea- I implemented originalCommand and name but couldn't
-                // figure out how to get the arg array into the struct arguments
-                struct command {
-                        char *originalCommand; //string with all the arguments
-                        char *arguments[16]; // array of each individual argument
-                        char *name; // the first argument, which is the name of the command
-                };
-                struct command curCmd;
-                strcpy( curCmd.originalCommand, cmd); //copy original command
-                //use strtok to parse command into an array of arguments
-                // hopefully eventually we can get this into the struct
-                char *curword = strtok(cmd, " ");
-                char *args[16] = {};
-                int n = 0;
-                while (curword != NULL){
-                        args[n] = curword;
-                        n++;
-                        curword = strtok(NULL, " ");
-                }
-                strcpy( curCmd.name, args[0]); // first argument is the name of the command
-                /* printing out the array to check its right
-                printf("array: ");
-                for (int i = 0; i < n; i++){
-                        printf("%s ", args[i]);   
-                }
-                printf("\n"); */
 
 
-                /* fork, exec, wait method - actually executing commands */
+
+                /* Builtin command - exit */
+                if (!strcmp(cmd, "exit")) {
+                        fprintf(stderr, "Bye...\n");
+                        break;
+                }
+
+                /* Builtin command - pwd */
+                
+                /* Builtin command - cd */
+
+                /* Regular command */
+
+                /* attempting with the fork, exec, wait method */
                 pid_t pid;
+                char *args[] = {cmd, NULL}; // this will need to be created when parsing the command line
                 pid = fork();
                 if (pid == 0) {
                         /* Child */
-                        /* Builtin command - exit */
-                        if (!strcmp(curCmd.name, "exit")) {
-                                fprintf(stderr, "Bye...\n");
-                                break;
-                        }
-
-                        /* Builtin command - pwd */
-                        else if (!strcmp(curCmd.name, "pwd")){
-                                char *cwd;
-                                getcwd(cwd, -1);
-                                printf("%s\n", cwd);
-                                break;
-                        }
-
-                        /* Builtin command - cd */
-                        else if (!strcmp(curCmd.name, "cd")){
-                                printf("attempting cd\n");
-                                break;
-                        }
-
-                        /* Regular command */
-                        execvp(curCmd.name, args);
+                        execvp(cmd, args);
                         perror("execvp");
                         exit(1);
-                        
                 } else if (pid > 0) {
                         /* Parent */
                         int status;
                         waitpid(pid, &status, 0);
-                        printf("+ completed '%s' [%d]\n", curCmd.originalCommand,
+                        printf("+ completed '%s' [%d]\n", cmd,
                         WEXITSTATUS(status));
-                        if(!strcmp(curCmd.name, "exit"))
-                                break;
                 } else {
                         perror("fork");
                         exit(1);
@@ -107,5 +71,5 @@ int main(void)
 
         return EXIT_SUCCESS;
 }
-      
+        
       
