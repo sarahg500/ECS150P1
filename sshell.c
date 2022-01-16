@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 #define CMDLINE_MAX 512
 
@@ -40,23 +39,9 @@ int main(void)
                         char *originalCommand; //string with all the arguments
                         char *arguments[16]; // array of each individual argument
                         char *name; // the first argument, which is the name of the command
-                        
                 };
                 struct command curCmd;
                 strcpy( curCmd.originalCommand, cmd); //copy original command
-                int redirect;
-                //Check to see if we need to redirect
-                char *redirection = strtok(cmd, ">");
-                if(!strcmp(redirection, curCmd.originalCommand)){
-                        redirect = 0;
-                 }else{
-                        redirect = 1;
-                        char* tempcmd;
-                        strcpy(tempcmd, cmd);
-                        redirection = strtok(NULL,">");
-                        printf("file to redirect: %s\n", redirection);
-                }
-
                 //use strtok to parse command into an array of arguments
                 // hopefully eventually we can get this into the struct
                 char *curword = strtok(cmd, " ");
@@ -89,9 +74,9 @@ int main(void)
 
                         /* Builtin command - pwd */
                         else if (!strcmp(curCmd.name, "pwd")){
-                                char *cwd = getcwd(NULL, 0);
+                                char *cwd;
+                                getcwd(cwd, -1);
                                 printf("%s\n", cwd);
-                                free(cwd);
                                 break;
                         }
 
@@ -101,17 +86,10 @@ int main(void)
                                 break;
                         }
 
-                        if ( redirect == 1 ){
-                                int fd;
-                                printf("opened a file\n");
-                                fd = open(redirection, O_TRUNC);
-                                break;
-                        } else{
-                                /* Regular command */
-                                execvp(curCmd.name, args);
-                                perror("execvp");
-                                exit(1);
-                        }
+                        /* Regular command */
+                        execvp(curCmd.name, args);
+                        perror("execvp");
+                        exit(1);
                         
                 } else if (pid > 0) {
                         /* Parent */
@@ -129,4 +107,5 @@ int main(void)
 
         return EXIT_SUCCESS;
 }
+      
       
