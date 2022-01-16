@@ -33,8 +33,23 @@ int main(void)
 
                 ////////////////////////////////////////////////////////////////////////
                 /* struct for a command and it's arguements */
+                // this works to have arguments, but it should be turned into a struct/data structure
+                // so we can keep this better organized as we go along (as suggested in the phases)
 
-
+                //use strtok to parse command into an array of arguments
+                char *curword = strtok(cmd, " ");
+                char *args[16] = {};
+                int n = 0;
+                while (curword != NULL){
+                        args[n] = curword;
+                        n++;
+                        curword = strtok(NULL, " ");
+                }
+                // printing out the array to make sure its right
+                printf("array: ");
+                for (int i = 0; i < n; i++)
+                        printf("%s ", args[i]);
+                printf("\n");
 
                 /* Builtin command - exit */
                 if (!strcmp(cmd, "exit")) {
@@ -50,7 +65,6 @@ int main(void)
 
                 /* attempting with the fork, exec, wait method */
                 pid_t pid;
-                char *args[] = {cmd, NULL}; // this will need to be created when parsing the command line
                 pid = fork();
                 if (pid == 0) {
                         /* Child */
