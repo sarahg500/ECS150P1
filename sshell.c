@@ -32,18 +32,31 @@ int main(void)
                         *nl = '\0';
 
         //////////////////////////////////////////////////////////////////////////////////////
+                 //////////////////////////////////////////////////////////////////////////////////////
                 /* struct for a command and it's arguements */
-                // basic struct idea- I implemented originalCommand and name but couldn't
-                // figure out how to get the arg array into the struct arguments
-                struct command {
+                // basic struct idea- this was causing seg faults when I ran this on 
+                // the ssh computers so I took it out for now
+                /*struct command {
                         char *originalCommand; //string with all the arguments
                         char *arguments[16]; // array of each individual argument
                         char *name; // the first argument, which is the name of the command
-                };
-                struct command curCmd;
-                strcpy( curCmd.originalCommand, cmd); //copy original command
+                };*/
                 //use strtok to parse command into an array of arguments
                 // hopefully eventually we can get this into the struct
+                char originalCmd[CMDLINE_MAX];
+                strcpy(originalCmd, cmd); // copy the original command- cmd will be changed
+
+                int redirect;
+                //check to see if we need to redirect
+                char *redirection = strtok(cmd, ">");
+                if(!strcmp(redirection, originalCmd)){
+                        redirect = 0;
+                }else{
+                        redirect = 1;
+                        redirection = strtok(NULL,">");
+                }
+
+                //make array of arguments
                 char *curword = strtok(cmd, " ");
                 char *args[16] = {};
                 int n = 0;
@@ -52,7 +65,6 @@ int main(void)
                         n++;
                         curword = strtok(NULL, " ");
                 }
-                strcpy( curCmd.name, args[0]); // first argument is the name of the command
                 /* printing out the array to check its right
                 printf("array: ");
                 for (int i = 0; i < n; i++){
@@ -60,20 +72,21 @@ int main(void)
                 }
                 printf("\n"); */
 
-
+                char firstCmd[CMDLINE_MAX]; //save first argument (name of the command)
+                strcpy(firstCmd,args[0]);
                 /* fork, exec, wait method - actually executing commands */
                 pid_t pid;
                 pid = fork();
                 if (pid == 0) {
                         /* Child */
                         /* Builtin command - exit */
-                        if (!strcmp(curCmd.name, "exit")) {
+                        if (!strcmp(firstCmd, "exit")) {
                                 fprintf(stderr, "Bye...\n");
                                 break;
                         }
 
                         /* Builtin command - pwd */
-                        else if (!strcmp(curCmd.name, "pwd")){
+                        else if (!strcmp(firstCmd, "pwd")){
                                 char *cwd = getcwd(NULL, 0);
                                 printf("%s\n", cwd);
                                 free(cwd);
@@ -81,23 +94,23 @@ int main(void)
                         }
 
                         /* Builtin command - cd */
-                        else if (!strcmp(curCmd.name, "cd")){
+                        else if (!strcmp(firstCmd, "cd")){
                                 printf("attempting cd\n");
                                 break;
                         }
 
                         /* Regular command */
-                        execvp(curCmd.name, args);
+                        execvp(firstCmd, args);
                         perror("execvp");
                         exit(1);
-                        
+
                 } else if (pid > 0) {
                         /* Parent */
                         int status;
                         waitpid(pid, &status, 0);
-                        printf("+ completed '%s' [%d]\n", curCmd.originalCommand,
+                        printf("+ completed '%s' [%d]\n", originalCmd,
                         WEXITSTATUS(status));
-                        if(!strcmp(curCmd.name, "exit"))
+                        if(!strcmp(firstCmd, "exit"))
                                 break;
                 } else {
                         perror("fork");
@@ -107,5 +120,3 @@ int main(void)
 
         return EXIT_SUCCESS;
 }
-          
-      
