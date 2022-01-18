@@ -1,5 +1,5 @@
 # Generate executable
-myprog: sshell.o 
+myprog: sshell.o
     gcc -Wall -Wextra -Werror -o myprog sshell.o 
 # Generate objects files from C files #idk if we need this if we don't have h files
 # prog.o: prog.c utils.h

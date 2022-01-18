@@ -3,13 +3,20 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #define CMDLINE_MAX 512
 
 int main(void)
 {
         char cmd[CMDLINE_MAX];
-
+        //char* PARSE_ERROR_1 = "too many process arguments";
+        //char* PARSE_ERROR_2 = "missing command";
+        //char* PARSE_ERROR_3 = "no output file";
+        //char* PARSE_ERROR_4 = "cannot open output file";
+        //char* PARSE_ERROR_5 = "mislocated output redirection";
         while (1) {
                 char *nl;
                 int retval;
@@ -55,6 +62,9 @@ int main(void)
                 }else{
                         redirect = 1;
                         redirection = strtok(NULL,">");
+                        int i = 0;
+                        while(redirection[i] == ' ') 
+                               redirection++;
                 }
 
                 //make array of arguments
@@ -97,6 +107,26 @@ int main(void)
                         /* Builtin command - cd */
                         else if (!strcmp(firstCmd, "cd")){
                                 printf("attempting cd\n");
+                                break;
+                        }
+
+                        /* Builtin command - sls */
+                        else if (!strcmp(firstCmd, "sls")){
+                                DIR *dp;
+                                struct dirent *ep;
+                                struct stat sb;
+                                dp = opendir (".");
+                                if (dp != NULL)
+                                        {
+                                        while ((ep = readdir (dp))!= NULL){
+                                                stat(ep->d_name, &sb);
+                                                printf("%s ",ep->d_name);
+                                                printf("(%lld bytes)\n",sb.st_size);
+                                        }
+                                        (void) closedir (dp);
+                                        }
+                                else
+                                        perror ("Couldn't open the directory");
                                 break;
                         }
 
