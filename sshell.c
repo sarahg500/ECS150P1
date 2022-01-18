@@ -12,11 +12,13 @@
 int main(void)
 {
         char cmd[CMDLINE_MAX];
-        //char* PARSE_ERROR_1 = "too many process arguments";
+        char* PARSE_ERROR_1 = "too many process arguments";
         //char* PARSE_ERROR_2 = "missing command";
-        //char* PARSE_ERROR_3 = "no output file";
+        char* PARSE_ERROR_3 = "no output file";
         //char* PARSE_ERROR_4 = "cannot open output file";
         //char* PARSE_ERROR_5 = "mislocated output redirection";
+        //char* LAUNCH_ERROR_1 = "cannot cd into directory";
+        //char* LAUNCH_ERROR_2 = "command not found";
         while (1) {
                 char *nl;
                 int retval;
@@ -51,6 +53,7 @@ int main(void)
                 };*/
                 //use strtok to parse command into an array of arguments
                 // hopefully eventually we can get this into the struct
+                int error=0;
                 char originalCmd[CMDLINE_MAX];
                 strcpy(originalCmd, cmd); // copy the original command- cmd will be changed
 
@@ -63,10 +66,14 @@ int main(void)
                         redirect = 1;
                         redirection = strtok(NULL,">");
                         int i = 0;
-                        while(redirection[i] == ' ') 
-                               redirection++;
+                        if(redirection == NULL){
+                                error = 1;
+                                printf("Error: %s\n", PARSE_ERROR_3);
+                        }else{
+                                while(redirection[i] == ' ') 
+                                redirection++;
+                        }
                 }
-
                 //make array of arguments
                 char *curword = strtok(cmd, " ");
                 char *args[16] = {};
@@ -75,6 +82,11 @@ int main(void)
                         args[n] = curword;
                         n++;
                         curword = strtok(NULL, " ");
+                        if(n == 15){
+                               printf("Error: %s\n", PARSE_ERROR_1);
+                               error = 1;
+                               break;
+                        }
                 }
                 /* printing out the array to check its right
                 printf("array: ");
@@ -86,6 +98,7 @@ int main(void)
                 char firstCmd[CMDLINE_MAX]; //save first argument (name of the command)
                 strcpy(firstCmd,args[0]);
                 /* fork, exec, wait method - actually executing commands */
+                if(error!=1){
                 pid_t pid;
                 pid = fork();
                 if (pid == 0) {
@@ -158,7 +171,7 @@ int main(void)
                         perror("fork");
                         exit(1);
                 }
-        }
+        }}
 
         return EXIT_SUCCESS;
 }
