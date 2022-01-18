@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #define CMDLINE_MAX 512
 
@@ -99,10 +100,21 @@ int main(void)
                                 break;
                         }
 
-                        /* Regular command */
-                        execvp(firstCmd, args);
-                        perror("execvp");
-                        exit(1);
+                        if ( redirect == 1 ){
+                                int fd;
+                                fd = open(redirection, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+                                dup2(fd, STDOUT_FILENO);
+                                close(fd);
+                                execvp(firstCmd, args);
+                                perror("execvp");
+                                exit(1);
+                                break;
+                        } else{
+                                /* Regular command */
+                                execvp(firstCmd, args);
+                                perror("execvp");
+                                exit(1);
+                        }
 
                 } else if (pid > 0) {
                         /* Parent */
