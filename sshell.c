@@ -203,16 +203,18 @@ int main(void)
                                 DIR *dp;
                                 struct dirent *ep;
                                 struct stat sb;
-                                dp = opendir (".");
+                                dp = opendir ("./");
                                 if (dp != NULL)
                                         {
+                                        char* filename;
                                         while ((ep = readdir (dp))!= NULL){
-                                                if(strcmp(ep->d_name,".")){
-                                              
-                                                        stat(ep->d_name, &sb);
-                                                        printf("%s ",ep->d_name);
-                                                        printf("(%lld bytes)\n",sb.st_size);
+                                                strcpy(filename, ep->d_name);
+                                                if(filename[0]!='.'){
+                                                        stat(filename, &sb);
+                                                        printf("%s ",filename);
+                                                        printf("(%ld bytes)\n",sb.st_size);
                                                 }
+                                                
                                         }
                                         (void) closedir (dp);
                                         }
