@@ -12,13 +12,6 @@
 int main(void)
 {
         char cmd[CMDLINE_MAX];
-        char* PARSE_ERROR_1 = "too many process arguments";
-        char* PARSE_ERROR_2 = "missing command"; // still needs to be implemented for pipe
-        char* PARSE_ERROR_3 = "no output file";
-        //char* PARSE_ERROR_4 = "cannot open output file";
-        //char* PARSE_ERROR_5 = "mislocated output redirection";
-        //char* LAUNCH_ERROR_1 = "cannot cd into directory";
-        char* LAUNCH_ERROR_2 = "command not found";
         while (1) {
                 char *nl;
                 int retval;
@@ -81,6 +74,7 @@ int main(void)
 
 
                 int redirect;
+                int redirectSDE = 0;
                 //check to see if we need to redirect
                 char *redirection = strtok(cmd, ">");
                 if(!strcmp(redirection, originalCmd) || pipeNum > 0){
@@ -97,8 +91,12 @@ int main(void)
                                         error = 1;
                                         write(STDERR_FILENO, "Error: no output file\n", 23);
                                 }else{
+                                        if(redirection[0] == '&'){
+                                                redirectSDE = 1;
+                                                redirection++;
+                                        }
                                         while(redirection[i] == ' ') 
-                                        redirection++;
+                                                redirection++;
                                 }
                         }
                 } 
@@ -228,6 +226,9 @@ int main(void)
                                 int fd;
                                 fd = open(redirection, O_CREAT | O_WRONLY | O_TRUNC, 0644);
                                 dup2(fd, STDOUT_FILENO);
+                                if(redirectSDE == 1){
+                                        dup2(fd, STDERR_FILENO);
+                                }
                                 close(fd);
                                 execvp(firstCmd, args);
                                 perror("execvp");
