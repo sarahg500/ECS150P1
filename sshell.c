@@ -9,23 +9,6 @@
 
 #define CMDLINE_MAX 512
 
-char** createArgs(char *cmd, char** args){
-        char *curword = strtok(cmd, " ");
-                //char *args[16] = {};
-                int n = 0;
-                while (curword != NULL){
-                        args[n] = curword;
-                        n++;
-                        curword = strtok(NULL, " ");
-                        //if(n == 15){
-                        //       printf("Error: %s\n", PARSE_ERROR_1);
-                        //       error = 1;
-                        //       break;
-                        //}
-                }
-        return args;
-}
-
 int main(void)
 {
         char cmd[CMDLINE_MAX];
@@ -59,20 +42,25 @@ int main(void)
                         *nl = '\0';
 
         //////////////////////////////////////////////////////////////////////////////////////
-                 //////////////////////////////////////////////////////////////////////////////////////
-                /* struct for a command and it's arguements */
-                // basic struct idea- this was causing seg faults when I ran this on 
-                // the ssh computers so I took it out for now
-                /*struct command {
-                        char *originalCommand; //string with all the arguments
-                        char *arguments[16]; // array of each individual argument
-                        char *name; // the first argument, which is the name of the command
-                };*/
-                //use strtok to parse command into an array of arguments
-                // hopefully eventually we can get this into the struct
+        //////////////////////////////////////////////////////////////////////////////////////
+                
                 int error=0;
                 char originalCmd[CMDLINE_MAX];
+                char checkCmd[CMDLINE_MAX]; // for checking how many arguments
                 strcpy(originalCmd, cmd); // copy the original command- cmd will be changed
+                strcpy(checkCmd, cmd); 
+
+                char *checking = strtok(checkCmd, " ");
+                int x = 0;
+                while (checking != NULL){
+                        x++;
+                        checking = strtok(NULL, " ");
+                        if(x == 17){
+                               write(STDERR_FILENO, "Error: too many process arguments\n", 35);
+                               error = 1;
+                               break;
+                        }
+                }
 
                 //Piping :(
                 int pipeNum=0;
@@ -92,10 +80,10 @@ int main(void)
                 }
 
 
-                /*int redirect;
+                int redirect;
                 //check to see if we need to redirect
                 char *redirection = strtok(cmd, ">");
-                if(!strcmp(redirection, originalCmd)){
+                if(!strcmp(redirection, originalCmd) || pipeNum > 0){
                         redirect = 0;
                 }else{
                         if(!strcmp(cmd, originalCmd)){
@@ -113,10 +101,8 @@ int main(void)
                                         redirection++;
                                 }
                         }
-                } */
+                } 
                 //make array of arguments
-                //char **args;
-                //args = createArgs(cmd,args);
                 char *curword = strtok(cmd, " ");
                 char *args[17] = {};
                 int n = 0;
@@ -124,11 +110,6 @@ int main(void)
                         args[n] = curword;
                         n++;
                         curword = strtok(NULL, " ");
-                        if(n == 17){
-                               write(STDERR_FILENO, "Error: too many process arguments\n", 35);
-                               error = 1;
-                               break;
-                        }
                 }
                 char *pipe1args[17] = {};
                 if(piping1 != NULL && pipeNum > 0){
@@ -173,26 +154,26 @@ int main(void)
                 char firstCmd[CMDLINE_MAX]; //save first argument (name of the command)
                 strcpy(firstCmd,args[0]);
                 /* fork, exec, wait method - actually executing commands */
-                //if(pipeNum > 0){
-                //        printf("attempting pipe: %i\n", pipeNum);
-                //        int fd[2];
-                //        int childpid;
-                //        pipe(fd);
-                //        if((childpid = fork())){
-                //                       //parent
-                //                       close(fd[1]);
-                //                       dup2(fd[0], STDIN_FILENO);
-                //                       execvp(pipe1args[0], pipe1args);
-                //        }else{
-                //                       close(fd[0]);
-                //                       dup2(fd[1],STDOUT_FILENO);
-                //                       execvp(firstCmd, args);
-                //               }
+                if(pipeNum > 0){
+                        printf("attempting pipe: %i\n", pipeNum);
+                        int fd[2];
+                        int childpid;
+                        pipe(fd);
+                        if((childpid = fork())){
+                                       //parent
+                                       close(fd[1]);
+                                       dup2(fd[0], STDIN_FILENO);
+                                       execvp(pipe1args[0], pipe1args);
+                                       exit(1);
+                        }else{
+                                       close(fd[0]);
+                                       dup2(fd[1],STDOUT_FILENO);
+                                       execvp(firstCmd, args);
+                                       exit(1);
+                               }
+                       }
 
-                //       }
-
-                //else 
-                if(error!=1){
+                else if(error!=1){
                 pid_t pid;
                 pid = fork();
                 if (pid == 0) {
@@ -241,22 +222,22 @@ int main(void)
                         }
                         
 
-                        //if ( redirect == 1 ){
-                        //        int fd;
-                        //        fd = open(redirection, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-                        //        dup2(fd, STDOUT_FILENO);
-                        //        close(fd);
-                        //        execvp(firstCmd, args);
-                        //        perror("execvp");
-                        //        exit(1);
-                        //        break;
-                        //} else{
+                        if ( redirect == 1 ){
+                                int fd;
+                                fd = open(redirection, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+                                dup2(fd, STDOUT_FILENO);
+                                close(fd);
+                                execvp(firstCmd, args);
+                                perror("execvp");
+                                exit(1);
+                                break;
+                        } else{
                                 /* Regular command */
                                 execvp(firstCmd, args);
                                 write(STDERR_FILENO, "Error: command not found\n", 26);
                                 //perror("execvp");
                                 exit(1);
-                       // }
+                        }
 
 
                 } else if (pid > 0) {
@@ -272,7 +253,8 @@ int main(void)
                         perror("fork");
                         exit(1);
                 }
-        }}
+        }
+        }
 
         return EXIT_SUCCESS;
 }
