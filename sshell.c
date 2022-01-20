@@ -153,10 +153,7 @@ int main(void)
                 strcpy(firstCmd,args[0]);
 
                 if (!strcmp(firstCmd, "cd")){
-                                printf("attempting cd %s\n", args[1]);
-                                chdir(args[1]);
-                                char *cwd = getcwd(NULL, 0);
-                                printf("%s\n", cwd);
+                                chdir(args[1]);     
                         }
 
                 /* fork, exec, wait method - actually executing commands */
