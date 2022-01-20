@@ -192,7 +192,7 @@ int main(void)
 
                         /* Builtin command - cd */
                         else if (!strcmp(firstCmd, "cd")){
-                                printf("attempting cd\n");
+                                chdir(args[1]);
                                 break;
                         }
 
