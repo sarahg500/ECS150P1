@@ -151,6 +151,14 @@ int main(void)
 
                 char firstCmd[CMDLINE_MAX]; //save first argument (name of the command)
                 strcpy(firstCmd,args[0]);
+
+                if (!strcmp(firstCmd, "cd")){
+                                printf("attempting cd %s\n", args[1]);
+                                chdir(args[1]);
+                                char *cwd = getcwd(NULL, 0);
+                                printf("%s\n", cwd);
+                        }
+
                 /* fork, exec, wait method - actually executing commands */
                 if(pipeNum > 0){
                         printf("attempting pipe: %i\n", pipeNum);
@@ -186,13 +194,12 @@ int main(void)
                         else if (!strcmp(firstCmd, "pwd")){
                                 char *cwd = getcwd(NULL, 0);
                                 printf("%s\n", cwd);
-                                free(cwd);
+                                //free(cwd);
                                 break;
                         }
 
                         /* Builtin command - cd */
                         else if (!strcmp(firstCmd, "cd")){
-                                chdir(args[1]);
                                 break;
                         }
 
