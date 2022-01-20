@@ -2,9 +2,13 @@
 
 ### By Sarah Gerard and Anthony Nguyen
 
-For our implantation of project 1, we decided to follow the phases provided by the professor in the project description. We found this to be really 
-helpful in dividing the work between us and for gradually developing the 
-project, so that each part would build on itself. 
+For our implantation of project 1, we decided to follow the phases provided by 
+the professor in the project description. We found this to be really helpful in
+dividing the work between us and for gradually developing the project, so that 
+each part would build on itself. We spent the time doing through each phase throughly
+to make sure each phase ran accordingly. 
+
+## Fork
 
 One of the main parts of our code is the `fork()` command, underneath which 
 lives all of the different commands we were supposed to implement and the 
@@ -21,12 +25,14 @@ running the associated logic.
 ## Parsing
 The other large section of our code was our parsing code. This ended up
 being divided into three sections. 
+
  1. Pipes
  2. Redirects
  3. Regular commands
+
 Each of these sections were important for properly parsing each of the
 possible inputs we could have gotten. We used `strtok()` to do the majority
-of the parsing for us, since it was able to check for each of the special 
+of the parsing for us, since it could check for each of the special 
 characters we needed to look for, as well as divide the arguments by spaces 
 and put them into an array, which was necessary for the `execvp()` 
 command used later. Although the parsing for each section was similar, each
