@@ -251,7 +251,7 @@ int main(void)
                         /* Parent */
                         int status;
                         waitpid(pid, &status, 0);
-                        printf("+ completed '%s' [%d]\n", originalCmd,
+                        fprintf(stderr,"+ completed '%s' [%d]\n", originalCmd,
                         WEXITSTATUS(status));
                         if(!strcmp(firstCmd, "exit"))
                                 break;
