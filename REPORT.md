@@ -43,15 +43,27 @@ write out the code for each instead of creating a parse function, for simplicity
 
 ## Pipes
 
-Within the piping portion, we broke the piping into four different section, since
-there can be up to three pipes. And so, we had the first three sections essentially
-makes sure what was inputted are all valid commands using `strcomp`. And when they 
-are not they would be redirected to an error message. After that the fourth section
-follows the `fork() + exec() + wait ()` to execute the piping argument, like what 
-we learned within lecture. 
+Within the piping portion, we broke the piping into three different section, 
+sincethere can be up to three pipes. Each section took the possible pipe and
+divided each of the arguments for a pipe into it's own array. This was 
+intended to make it easier to actually implement each given command since we
+needed an array of argumentsto execute each execvp() funcion. If there were 
+pipes to execute, we decided to do it separately from the main 
+`fork() + exec() + wait ()`, since the steps to actually create and execute
+a pipe were different from other functions. Since we didn't quite have enough
+time to finish implementing the pipe completely, this also helped us
+implement part of the pipe without sacrificing the integrity of the rest of the
+project. This way we were able to keep the rest of the code functional while 
+also being able to test and experiment with the pipes.
 
 ## Redirects 
 
+To implement redirects, we first had to parse the input for possible redirect
+commands. This was discussed in the Parsing section. Then, if there was a 
+redirect we were able to handle it within the main `fork()` function of our 
+code. We kept a variable that kept track of wether or not there was need for
+a redirect, and if there was, the given logic was executed to make sure the 
+output was not printed to the console and instead printed to a file.
 
 
 ## Regular Commands
@@ -60,7 +72,9 @@ For the rest of the code, we followed what we learned in class, with the
 `fork() + exec() + wait ()` method to execute each arguments. And within 
  each section, we compared the argument using `strcomp` to what we were given 
 to ensure no other input would work on the code. With that, we had builtin
-commands execute once the arugment is called.
+commands execute once the arugment is called. If the command was not built
+in, then we used execvp() to execute the function with the given array
+of arguments that was parsed in the begining of the code.
 
 ## Future Improvements 
 If we had more time, we could have improved our code by implementing more 
@@ -78,7 +92,15 @@ To test our project, we made sure to continuously check our code in ssh,
 since this was the environment we would be tested in. We also worked 
 through the tester file that was provided to us. This allowed us to check our
 outputs against the example file, which we did anytime we were unsure of 
-what the output was supposed to look like. 
+what the output was supposed to look like. When we were close to finishing
+the project, we ran our code through the tester shell and on gradescope.
+This helped us to see any final vulnerabilities in our project. For example,
+we were originally printing the exit codes on std out instead of std error,
+which caused problems in almost all of the test cases. Other than that, we
+were pretty confident that what we had was working as intended. There were
+some parts of the project, such as pipes, which we wished we had more time
+to spend on so we could better implement them and ensure they worked as
+intended.
 
 ## Sources
 Here are the sources we used to help implement our solution. 
