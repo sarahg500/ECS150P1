@@ -5,8 +5,9 @@
 For our implementation of project 1, we decided to follow the phases provided by 
 the professor in the project description. We found this to be really helpful in
 dividing the work between us and for gradually developing the project, so that 
-each part would build on itself. We spent the time doing through each phase throughly
-to make sure each phase ran accordingly. 
+each part would build on itself. We spent the time going through each phase throughly
+to make sure each phase ran accordingly. We also used github to take turns to code
+whenever we were free, since most of the time we were busy with our personal needs.
 
 ## Fork
 
@@ -40,11 +41,26 @@ command used later. Although the parsing for each section was similar, each
 had it's own unique aspects that we had to work through, so we decided to
 write out the code for each instead of creating a parse function, for simplicity.
 
-## Other
+## Pipes
+
+Within the piping portion, we broke the piping into four different section, since
+there can be up to three pipes. And so, we had the first three sections essentially
+makes sure what was inputted are all valid commands using `strcomp`. And when they 
+are not they would be redirected to an error message. After that the fourth section
+follows the `fork() + exec() + wait ()` to execute the piping argument, like what 
+we learned within lecture. 
+
+## Redirects 
+
+
+
+## Regular Commands
 
 For the rest of the code, we followed what we learned in class, with the 
-`fork() + exec() + wait ()` method to execute each arguments. 
-
+`fork() + exec() + wait ()` method to execute each arguments. And within 
+ each section, we compared the argument using `strcomp` to what we were given 
+to ensure no other input would work on the code. With that, we had builtin
+commands execute once the arugment is called.
 
 ## Future Improvements 
 If we had more time, we could have improved our code by implementing more 
@@ -62,7 +78,7 @@ To test our project, we made sure to continuously check our code in ssh,
 since this was the environment we would be tested in. We also worked 
 through the tester file that was provided to us. This allowed us to check our
 outputs against the example file, which we did anytime we were unsure of 
-what the output was supposed to look like.
+what the output was supposed to look like. 
 
 ## Sources
 Here are the sources we used to help implement our solution. 
