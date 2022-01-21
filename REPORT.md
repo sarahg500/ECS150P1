@@ -2,7 +2,7 @@
 
 ### By Sarah Gerard and Anthony Nguyen
 
-For our implantation of project 1, we decided to follow the phases provided by 
+For our implementation of project 1, we decided to follow the phases provided by 
 the professor in the project description. We found this to be really helpful in
 dividing the work between us and for gradually developing the project, so that 
 each part would build on itself. We spent the time doing through each phase throughly
@@ -23,12 +23,13 @@ checking which command we were doing first, and then calling `fork()` and
 running the associated logic.
 
 ## Parsing
+
 The other large section of our code was our parsing code. This ended up
 being divided into three sections. 
 
  1. Pipes
  2. Redirects
- 3. Regular commands
+ 3. Regular Commands
 
 Each of these sections were important for properly parsing each of the
 possible inputs we could have gotten. We used `strtok()` to do the majority
@@ -59,6 +60,7 @@ what the output was supposed to look like.
 
 ## Sources
 Here are the sources we used to help implement our solution. 
+
 *How-to-remove-first-character-from-c-string*
 https://stackoverflow.com/questions/4295754/how-to-remove-first-character-from-c-string
 
@@ -76,3 +78,6 @@ https://www.ibm.com/docs/en/zos/2.2.0?topic=functions-getcwd-get-path-name-worki
 
 *Create a linux pipeline in c*
 https://stackoverflow.com/questions/21923982/how-to-create-a-linux-pipeline-example-in-c
+
+*How to use chdir()*
+https://pubs.opengroup.org/onlinepubs/009695299/functions/chdir.html
