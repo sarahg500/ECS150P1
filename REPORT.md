@@ -40,6 +40,12 @@ command used later. Although the parsing for each section was similar, each
 had it's own unique aspects that we had to work through, so we decided to
 write out the code for each instead of creating a parse function, for simplicity.
 
+## Other
+
+For the rest of the code, we followed what we learned in class, with the 
+`fork() + exec() + wait ()` method to execute each arguments. 
+
+
 ## Future Improvements 
 If we had more time, we could have improved our code by implementing more 
 functions and defining centralized data structures. We tried to create functions
